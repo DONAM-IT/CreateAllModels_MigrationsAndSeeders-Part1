@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import { resolve } from "path";
 import db from "../models/index";
 
 const salt = bcrypt.genSaltSync(10);
@@ -96,9 +95,28 @@ let updateUserData = (data) => {
     }
   });
 };
+
+let deleteUserById = (userId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let user = await db.User.findOne({
+        where: { id: userId },
+      });
+
+      if (user) {
+        await user.destroy();
+      }
+
+      resolve(); //return; thoát ra khỏi hàm Promise
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 module.exports = {
   createNewUser: createNewUser,
   getAllUser: getAllUser,
   getUserInfoById: getUserInfoById,
   updateUserData: updateUserData,
+  deleteUserById: deleteUserById,
 };
