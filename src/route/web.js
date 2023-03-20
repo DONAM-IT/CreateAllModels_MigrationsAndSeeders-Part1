@@ -16,6 +16,7 @@ let initWebRoutes = (app) => {
   router.get("/delete-crud", homeController.deleteCRUD);
 
   router.post("/api/login", userController.handleLogin);
+  router.get("/api/get-all-users", userController.handleGetAllUsers);
 
   router.get("/hoidanit", (req, res) => {
     return res.send("Hello World with hoidanit");
