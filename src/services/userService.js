@@ -23,7 +23,7 @@ let handleUserLogin = (email, password) => {
         //user already exist
 
         let user = await db.User.findOne({
-          attributes: ["email", "roleId", "password"], // cách lấy 1 vài trường mà mình muốn
+          attributes: ["email", "roleId", "password", "firstName", "lastName"], // cách lấy 1 vài trường mà mình muốn
           where: { email: email },
           raw: true, // nó sẽ trả biến user thành 1 object
         });
