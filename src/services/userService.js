@@ -116,14 +116,16 @@ let createNewUser = (data) => {
       } else {
         let hashPasswordFromBcrypt = await hashUserPassword(data.password);
         await db.User.create({
+          // Tên cột table User: data.dữ liệu bên Fontend gửi lên, lưu ý backend và fontend phải trùng nhau
           email: data.email,
           password: hashPasswordFromBcrypt,
           firstName: data.firstName,
           lastName: data.lastName,
           address: data.address,
-          phonenumber: data.phonenumber,
-          gender: data.gender === "1" ? true : false,
+          phonenumber: data.phoneNumber, //DATA. LÀ DỮ LIỆU BÊN REACT GỬI LÊN PHẢI TRÙNG
+          gender: data.gender,
           roleId: data.roleId,
+          positionId: data.positionId,
         });
 
         resolve({
