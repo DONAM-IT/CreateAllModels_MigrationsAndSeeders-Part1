@@ -126,6 +126,7 @@ let createNewUser = (data) => {
           gender: data.gender,
           roleId: data.roleId,
           positionId: data.positionId,
+          image: data.avatar, //thuộc tính là image, còn cái trường truyền lên bên phía react là avatar
         });
 
         resolve({
@@ -189,6 +190,9 @@ let updateUserData = (data) => {
         user.gender = data.gender;
         // user.phonenumber = data.phoneNumber; //data.phoneNumber là dữ liệu ép kiểu bên react đã đặt
         user.phonenumber = data.phonenumber;
+        if (data.avatar) {
+          user.image = data.avatar;
+        }
 
         await user.save();
 
