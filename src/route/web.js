@@ -23,6 +23,8 @@ let initWebRoutes = (app) => {
 
   router.get("/api/allcode", userController.getAllCode);
 
+  router.get("/api/v1/post/limit", userController.getPostLimit);
+  router.get("/api/v1/doctors", userController.getDoctors);
   router.get("/hoidanit", (req, res) => {
     return res.send("Hello World with hoidanit");
   });

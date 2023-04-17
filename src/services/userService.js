@@ -1,5 +1,6 @@
 import db from "../models/index";
 import bcrypt, { hash } from "bcryptjs";
+require("dotenv").config();
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -234,6 +235,85 @@ let getAllCodeService = (typeInput) => {
     }
   });
 };
+let getPostLimitService = (offset) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let res = {};
+      let response = await db.User.findAndCountAll({
+        offset: offset * +process.env.LIMIT_USER || 0,
+        limit: +process.env.LIMIT_USER,
+      });
+      res.errCode = 0;
+      res.data = response;
+      resolve(res);
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+let getUsersPaginationService = ({
+  page,
+  limit,
+  order,
+  firstName,
+  available,
+  ...query
+}) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let queries = {};
+      // let queries = {};
+      //offset là vị trí muốn lấy, offset = 8 là bỏ qua 8 cái đầu tiên
+      let offset = !page || +page <= 1 ? 0 : +page - 1;
+      let fLimit = +limit || +process.env.LIMIT_USER; // số lượng lấy trong 1 dòng
+      queries.offset = offset * limit;
+      queries.limit = fLimit;
+      if (order) queries.order = [order];
+      if (firstName) query.firstName = { [Op.substring]: firstName };
+
+      //hàm để phân trang findAndCountAll
+      let response = await db.User.findAndCountAll({
+        where: query,
+        offset: +process.env.LIMIT_USER * offset || 0,
+        ...queries,
+      });
+
+      resolve({
+        err: response ? 0 : 1,
+        mes: response ? "Got" : "Cannot found users",
+        userData: response,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+let getDoctorsService = ({ page, limit, order, name, ...query }) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const queries = { raw: true, nest: true };
+      const offsetStep = !page || +page < 1 ? 0 : +page - 1;
+      const fLimit = +limit || +process.env.LIMIT_BOOK;
+      queries.offset = offsetStep * fLimit;
+      queries.limit = fLimit;
+      if (order) queries.order = [order];
+      if (name) query.lastName = { [Op.substring]: name };
+      // if (available) query.available = { [Op.between]: available };
+      const response = await db.User.findAndCountAll({
+        where: query,
+        ...queries,
+      });
+      resolve({
+        err: response ? 0 : 1, //response[1] là true trả về mã code là 0, response[0] là false trả về mã code là 1 tức là response[1] là tạo thành công thì trả về 0, ko tạo thì trả về 1, 0 1 trong respone là phần tử đầu tiên là data
+        mes: response ? "Got" : "Cannot found books",
+        doctorData: response,
+      });
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
 
 module.exports = {
   handleUserLogin: handleUserLogin,
@@ -242,4 +322,7 @@ module.exports = {
   deleteUser: deleteUser,
   updateUserData: updateUserData,
   getAllCodeService: getAllCodeService,
+  getUsersPaginationService: getUsersPaginationService,
+  getPostLimitService: getPostLimitService,
+  getDoctorsService: getDoctorsService,
 };

@@ -91,6 +91,48 @@ let getAllCode = async (req, res) => {
     });
   }
 };
+
+const getPostLimit2 = async (req, res) => {
+  let { data } = req.query;
+  try {
+    let response = await userService.getUsersPaginationService(data);
+
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Failed at post controller: " + e,
+    });
+  }
+};
+
+let getPostLimit = async (req, res) => {
+  let { page } = req.query;
+  try {
+    let data = await userService.getPostLimitService(page);
+    //  console.log(data)
+    return res.status(200).json(data);
+  } catch (e) {
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Failed at post controller: " + e,
+    });
+  }
+};
+
+let getDoctors = async (req, res) => {
+  try {
+    const response = await userService.getDoctorsService(req.query); //gửi bằng param
+
+    return res.status(200).json(response);
+  } catch (e) {
+    return res.status(200).json({
+      errCode: -1,
+      errMessage: "Failed at post controller: " + e,
+    });
+  }
+};
+
 module.exports = {
   handleLogin: handleLogin,
   handleGetAllUsers: handleGetAllUsers,
@@ -98,4 +140,7 @@ module.exports = {
   handleEditUser: handleEditUser,
   handleDeleteUser: handleDeleteUser,
   getAllCode: getAllCode,
+  getPostLimit2: getPostLimit2,
+  getPostLimit: getPostLimit,
+  getDoctors: getDoctors,
 };

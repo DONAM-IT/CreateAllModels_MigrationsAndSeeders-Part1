@@ -1,0 +1,17 @@
+###
+GET http://localhost:8080/api/v1/book/?order[]=price&order[]=DESC&limit=2&page=2&name=of
+
+###
+GET http://localhost:8080/api/v1/book/?available[]=0&available[]=10
+
+###
+GET http://localhost:8080/api/allcode?type=ROLE
+
+###
+GET http://localhost:8080/api/v1/doctors/?order[]=id&order[]=DESC&limit=10&page=1&lastName=x
+
+###
+GET http://localhost:8080/api/v1/doctors/?limit=5&page=2
+
+###
+GET http://localhost:8080/api/v1/post/limit?page=1
