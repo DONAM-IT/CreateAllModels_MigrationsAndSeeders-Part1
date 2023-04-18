@@ -297,7 +297,11 @@ let getDoctorsService = ({ page, limit, order, name, ...query }) => {
       const fLimit = +limit || +process.env.LIMIT_BOOK;
       queries.offset = offsetStep * fLimit;
       queries.limit = fLimit;
-      if (order) queries.order = [order];
+      if (!order) {
+        queries.order = [["createdAt", "DESC"]];
+      } else {
+        queries.order = [order];
+      }
       if (name) query.lastName = { [Op.substring]: name };
       // if (available) query.available = { [Op.between]: available };
       const response = await db.User.findAndCountAll({
