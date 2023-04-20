@@ -65,7 +65,7 @@ let saveDetailInforDoctor = (inputData) => {
       ) {
         resolve({
           errCode: 1,
-          errMessage: "Missing parameter",
+          errMessage: "Missing required parameter!",
         });
       } else {
         await db.Markdown.create({
@@ -80,12 +80,56 @@ let saveDetailInforDoctor = (inputData) => {
         });
       }
     } catch (error) {
-      reject(e);
+      reject(error);
     }
   });
 };
+
+let getDetailDoctorById = (inputId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!inputId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameter!",
+        });
+      } else {
+        let data = await db.User.findOne({
+          where: {
+            id: inputId,
+          },
+          attributes: {
+            exclude: ["password", "image"],
+          },
+          //Muốn dùng include phải định nghĩa các mối quan hệ cho nó
+          include: [
+            {
+              model: db.Markdown,
+              attributes: ["description", "contentHTML", "contentMarkdown"],
+            },
+            {
+              model: db.Allcode,
+              as: "positionData",
+              attributes: ["valueEn", "valueVi"], //các trường cần lấy
+            },
+          ],
+          raw: true,
+          nest: true, //nó sẽ gom nhóm lại
+        });
+        resolve({
+          errCode: 0,
+          data: data,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getTopDoctorHome: getTopDoctorHome, //key và value
   getAllDoctors: getAllDoctors,
   saveDetailInforDoctor: saveDetailInforDoctor,
+  getDetailDoctorById: getDetailDoctorById,
 };
