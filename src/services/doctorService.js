@@ -61,19 +61,38 @@ let saveDetailInforDoctor = (inputData) => {
       if (
         !inputData.doctorId ||
         !inputData.contentHTML ||
-        !inputData.contentMarkdown
+        !inputData.contentMarkdown ||
+        !inputData.action
       ) {
         resolve({
           errCode: 1,
           errMessage: "Missing required parameter!",
         });
       } else {
-        await db.Markdown.create({
-          contentHTML: inputData.contentHTML,
-          contentMarkdown: inputData.contentMarkdown,
-          description: inputData.description,
-          doctorId: inputData.doctorId,
-        });
+        if (inputData.action === "CREATE") {
+          await db.Markdown.create({
+            contentHTML: inputData.contentHTML,
+            contentMarkdown: inputData.contentMarkdown,
+            description: inputData.description,
+            doctorId: inputData.doctorId,
+          });
+        } else if (inputData.action === "EDIT") {
+          let doctorMarkdown = await db.Markdown.findOne({
+            where: { doctorId: inputData.doctorId },
+            raw: false, //doctorMarkdown để nó hiểu là 1 sequelize object
+          });
+          //có nhiều người cùng thao tác đến database, lúc nhìn database có nhưng có thằng khác xóa rồi,
+          //thì trường hợp này trả ra null, check if để app ko lỗi
+          //nếu tìm thấy doctorMarkdown
+          console.log(doctorMarkdown);
+          if (doctorMarkdown) {
+            doctorMarkdown.contentHTML = inputData.contentHTML;
+            doctorMarkdown.contentMarkdown = inputData.contentMarkdown;
+            doctorMarkdown.description = inputData.description;
+            // doctorMarkdown.updateAt = new Date(); không cần vì sequelize nó tự cập nhật thời gian
+            await doctorMarkdown.save(); //hàm save phải set raw: false
+          }
+        }
         resolve({
           errCode: 0,
           errMessage: "Save infor doctor succeed!",
@@ -122,7 +141,7 @@ let getDetailDoctorById = (inputId) => {
         if (data && data.image) {
           data.image = new Buffer(data.image, "base64").toString("binary");
         }
-        console.log(data);
+        // console.log(data);
         //nếu không tìm thấy data set data = 1 object rỗng
         if (!data) data = {};
         resolve({
