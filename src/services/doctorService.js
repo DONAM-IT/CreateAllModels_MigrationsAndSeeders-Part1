@@ -99,7 +99,8 @@ let getDetailDoctorById = (inputId) => {
             id: inputId,
           },
           attributes: {
-            exclude: ["password", "image"],
+            // exclude: ["password", "image"],
+            exclude: ["password"],
           },
           //Muốn dùng include phải định nghĩa các mối quan hệ cho nó
           include: [
@@ -113,9 +114,17 @@ let getDetailDoctorById = (inputId) => {
               attributes: ["valueEn", "valueVi"], //các trường cần lấy
             },
           ],
-          raw: true,
+          //raw: true thì nó hiểu là 1 sequelize object chứ nó không phải là 1 thằng javascript object thành ra có sự khác biệt
+          raw: false, //raw: false sẽ covert sang kiểu object
           nest: true, //nó sẽ gom nhóm lại
         });
+        //convert ảnh qua base64
+        if (data && data.image) {
+          data.image = new Buffer(data.image, "base64").toString("binary");
+        }
+        console.log(data);
+        //nếu không tìm thấy data set data = 1 object rỗng
+        if (!data) data = {};
         resolve({
           errCode: 0,
           data: data,
