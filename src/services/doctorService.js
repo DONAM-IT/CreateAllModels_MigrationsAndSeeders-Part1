@@ -1,6 +1,6 @@
 import db from "../models/index";
 require("dotenv").config();
-import _ from "lodash";
+import _, { reject } from "lodash";
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
@@ -221,10 +221,42 @@ let bulkCreateSchedule = (data) => {
   });
 };
 
+let getScheduleByDate = (doctorId, date) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!doctorId || !date) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameter",
+        });
+      } else {
+        let dataSchedule = await db.Schedule.findAll({
+          where: {
+            doctorId: doctorId,
+            date: date,
+          },
+        });
+
+        if (!dataSchedule) {
+          dataSchedule = [];
+        }
+
+        resolve({
+          errCode: 0,
+          data: dataSchedule, //nếu như thành công thì nó trả ra 1 cái object, nó có cái trường data sẽ lưu lại kế hoạch của thằng bác sĩ
+        });
+      }
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
 module.exports = {
   getTopDoctorHome: getTopDoctorHome, //key và value
   getAllDoctors: getAllDoctors,
   saveDetailInforDoctor: saveDetailInforDoctor,
   getDetailDoctorById: getDetailDoctorById,
   bulkCreateSchedule: bulkCreateSchedule,
+  getScheduleByDate: getScheduleByDate,
 };
