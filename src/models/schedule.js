@@ -9,6 +9,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      // 1 thằng Schedule nó sẽ thuộc về 1 thằng Allcode
+      Schedule.belongsTo(models.Allcode, {
+        foreignKey: "timeType", //timeType là cột bên cái table Schedule
+        targetKey: "keyMap", //keyMap là cột bên cái table Allcode
+        //dùng 2 cái trường timeType và keyMap để squelize biết khi muốn lấy trường timeType này nó sẽ map bên cái trường keyMap bên cái bảng Allcode và sequelize sẽ trả data bên bảng data bên AllCode dưới dạng timeTypeData
+        as: "timeTypeData",
+      });
     }
   }
   Schedule.init(

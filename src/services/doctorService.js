@@ -181,8 +181,8 @@ let bulkCreateSchedule = (data) => {
         // console.log("hoi dan it channel: data send: ", data);
         // console.log("hoi dan it channel: data send: ", typeof data);
         // console.log("hoi dan it channel: data send: ", data[0]);
-        console.log("hoi dan it channel: data send:after ", schedule); //lấy biến schedule từ trong cục data gửi lên
-        console.log("hoi dan it channel: data send: ", typeof schedule);
+        // console.log("hoi dan it channel: data send:after ", schedule); //lấy biến schedule từ trong cục data gửi lên
+        // console.log("hoi dan it channel: data send: ", typeof schedule);
 
         //get all existing data
         let existing = await db.Schedule.findAll({
@@ -191,17 +191,19 @@ let bulkCreateSchedule = (data) => {
           raw: true,
         });
 
-        //convert date
-        if (existing && existing.length > 0) {
-          existing = existing.map((item) => {
-            item.date = new Date(item.date).getTime();
-            return item;
-          });
-        }
+        // //convert date
+        // if (existing && existing.length > 0) {
+        //   existing = existing.map((item) => {
+        //     item.date = new Date(item.date).getTime();
+        //     return item;
+        //   });
+        // }
+        // console.log("check existing: ", existing); //be lưu là 1 string(varchar)
+        // console.log("check create: ", schedule); //fe truyền lên là 1 số (int)
 
-        //compare diffrent
+        //compare different
         let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-          return a.timeType === b.timeType && a.date === b.date;
+          return a.timeType === b.timeType && +a.date === +b.date;
         });
 
         //create data
@@ -235,6 +237,15 @@ let getScheduleByDate = (doctorId, date) => {
             doctorId: doctorId,
             date: date,
           },
+          include: [
+            {
+              model: db.Allcode,
+              as: "timeTypeData",
+              attributes: ["valueEn", "valueVi"], //thuộc tính lấy chỉ là tiếng anh và tiếng việt
+            },
+          ],
+          raw: true,
+          nest: true,
         });
 
         if (!dataSchedule) {
