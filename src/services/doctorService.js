@@ -1,6 +1,6 @@
 import db from "../models/index";
 require("dotenv").config();
-import _, { reject } from "lodash";
+import _ from "lodash";
 
 const MAX_NUMBER_SCHEDULE = process.env.MAX_NUMBER_SCHEDULE;
 
@@ -63,46 +63,119 @@ let getAllDoctors = () => {
 let saveDetailInforDoctor = (inputData) => {
   return new Promise(async (resolve, reject) => {
     try {
-      if (
-        !inputData.doctorId ||
-        !inputData.contentHTML ||
-        !inputData.contentMarkdown ||
-        !inputData.action
-      ) {
-        resolve({
-          errCode: 1,
-          errMessage: "Missing required parameter!",
-        });
-      } else {
-        if (inputData.action === "CREATE") {
-          await db.Markdown.create({
-            contentHTML: inputData.contentHTML,
-            contentMarkdown: inputData.contentMarkdown,
-            description: inputData.description,
-            doctorId: inputData.doctorId,
+      //biến truyền bên FE
+      //   selectedPrice: this.state.selectedPrice.value,
+      // selectedPayment: this.state.selectedPayment.value,
+      // selectedProvince: this.state.selectedProvince.value,
+      // nameClinic: this.state.nameClinic.value,
+      // addressClinic: this.state.addressClinic.value,
+      // note: this.state.note.value,
+
+      // CÁCH VIẾT TỐI ƯU
+      let requiredParams = [
+        "doctorId",
+        "contentHTML",
+        "contentMarkdown",
+        "action",
+        "selectedPrice",
+        "selectedPayment",
+        "selectedProvince",
+        "nameClinic",
+        "addressClinic",
+        "note",
+      ];
+
+      for (let i = 0; i < requiredParams.length; i++) {
+        if (!inputData[requiredParams[i]]) {
+          resolve({
+            errCode: 1,
+            errMessage: "Missing required parameter!",
           });
-        } else if (inputData.action === "EDIT") {
-          let doctorMarkdown = await db.Markdown.findOne({
-            where: { doctorId: inputData.doctorId },
-            raw: false, //doctorMarkdown để nó hiểu là 1 sequelize object
-          });
-          //có nhiều người cùng thao tác đến database, lúc nhìn database có nhưng có thằng khác xóa rồi,
-          //thì trường hợp này trả ra null, check if để app ko lỗi
-          //nếu tìm thấy doctorMarkdown
-          console.log(doctorMarkdown);
-          if (doctorMarkdown) {
-            doctorMarkdown.contentHTML = inputData.contentHTML;
-            doctorMarkdown.contentMarkdown = inputData.contentMarkdown;
-            doctorMarkdown.description = inputData.description;
-            // doctorMarkdown.updateAt = new Date(); không cần vì sequelize nó tự cập nhật thời gian
-            await doctorMarkdown.save(); //hàm save phải set raw: false
-          }
+          return; // Thoát khỏi vòng lặp nếu có tham số bị thiếu
         }
-        resolve({
-          errCode: 0,
-          errMessage: "Save infor doctor succeed!",
+      }
+
+      // Nếu tất cả các tham số đều tồn tại, tiếp tục xử lý logic ở đây
+      // ...
+
+      // if (
+      //   (!inputData.doctorId ||
+      //     !inputData.contentHTML ||
+      //     !inputData.contentMarkdown ||
+      //     !inputData.action ||
+      //     !inputData.selectedPrice ||
+      //     !inputData.selectedPayment ||
+      //     !inputData.selectedProvince ||
+      //     !inputData.nameClinic,
+      //   !inputData.addressClinic || !inputData.note)
+      // ) {
+      //   resolve({
+      //     errCode: 1,
+      //     errMessage: "Missing required parameter!",
+      //   });
+      // } else {
+
+      //upsert (update hoặc insert) to Markdown
+      if (inputData.action === "CREATE") {
+        await db.Markdown.create({
+          contentHTML: inputData.contentHTML,
+          contentMarkdown: inputData.contentMarkdown,
+          description: inputData.description,
+          doctorId: inputData.doctorId,
+        });
+      } else if (inputData.action === "EDIT") {
+        let doctorMarkdown = await db.Markdown.findOne({
+          where: { doctorId: inputData.doctorId },
+          raw: false, //doctorMarkdown để nó hiểu là 1 sequelize object
+        });
+        //có nhiều người cùng thao tác đến database, lúc nhìn database có nhưng có thằng khác xóa rồi,
+        //thì trường hợp này trả ra null, check if để app ko lỗi
+        //nếu tìm thấy doctorMarkdown
+        console.log(doctorMarkdown);
+        if (doctorMarkdown) {
+          doctorMarkdown.contentHTML = inputData.contentHTML;
+          doctorMarkdown.contentMarkdown = inputData.contentMarkdown;
+          doctorMarkdown.description = inputData.description;
+          // doctorMarkdown.updateAt = new Date(); không cần vì sequelize nó tự cập nhật thời gian
+          await doctorMarkdown.save(); //hàm save phải set raw: false
+        }
+      }
+
+      //upsert to Doctor _infor table
+      let doctorInfor = await db.Doctor_infor.findOne({
+        where: {
+          doctorId: inputData.doctorId,
+        },
+        raw: false, //để nó lấy thằng instance sequelize không phải trả ra object
+      });
+
+      if (doctorInfor) {
+        //update
+        doctorInfor.doctorId = inputData.doctorId;
+        doctorInfor.priceId = inputData.selectedPrice;
+        doctorInfor.provinceId = inputData.selectedProvince;
+        doctorInfor.paymentId = inputData.selectedPayment;
+        doctorInfor.nameClinic = inputData.nameClinic;
+        doctorInfor.addressClinic = inputData.addressClinic;
+        doctorInfor.note = inputData.note;
+        await doctorInfor.save(); //hàm save phải set raw: false
+      } else {
+        //create khi chúng ta tạo là 1 biến object
+        await db.Doctor_infor.create({
+          doctorId: inputData.doctorId,
+          priceId: inputData.selectedPrice,
+          provinceId: inputData.selectedProvince,
+          paymentId: inputData.selectedPayment,
+          nameClinic: inputData.nameClinic,
+          addressClinic: inputData.addressClinic,
+          note: inputData.note,
         });
       }
+      resolve({
+        errCode: 0,
+        errMessage: "Save infor doctor succeed!",
+      });
+      // }
     } catch (error) {
       reject(error);
     }
