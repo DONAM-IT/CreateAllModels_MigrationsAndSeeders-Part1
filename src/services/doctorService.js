@@ -205,23 +205,51 @@ let getDetailDoctorById = (inputId) => {
               model: db.Markdown,
               attributes: ["description", "contentHTML", "contentMarkdown"],
             },
+            //eager loading
             {
               model: db.Allcode,
               as: "positionData",
               attributes: ["valueEn", "valueVi"], //các trường cần lấy
+            },
+            {
+              model: db.Doctor_infor,
+              attributes: {
+                exclude: ["id", "doctorId"],
+              },
+              //map giá trị sang bên bảng Allcode
+              include: [
+                {
+                  model: db.Allcode,
+                  as: "priceTypeData",
+                  attributes: ["valueEn", "valueVi"], //các trường cần lấy
+                },
+                {
+                  model: db.Allcode,
+                  as: "provinceTypeData",
+                  attributes: ["valueEn", "valueVi"], //các trường cần lấy
+                },
+                {
+                  model: db.Allcode,
+                  as: "paymentTypeData",
+                  attributes: ["valueEn", "valueVi"], //các trường cần lấy
+                },
+              ],
             },
           ],
           //raw: true thì nó hiểu là 1 sequelize object chứ nó không phải là 1 thằng javascript object thành ra có sự khác biệt
           raw: false, //raw: false sẽ covert sang kiểu object
           nest: true, //nó sẽ gom nhóm lại
         });
+
         //convert ảnh qua base64
         if (data && data.image) {
           data.image = new Buffer(data.image, "base64").toString("binary");
         }
+
         // console.log(data);
         //nếu không tìm thấy data set data = 1 object rỗng
         if (!data) data = {};
+
         resolve({
           errCode: 0,
           data: data,

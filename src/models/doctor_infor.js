@@ -9,6 +9,25 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      //Doctor_infor nó đã quan hệ với bảng User
+      Doctor_infor.belongsTo(models.User, { foreignKey: "doctorId" }); //nhớ belongsTo thì foreignKey nằm bảng A
+
+      //Doctor_infor nó đã quan hệ với bảng Allcode
+      Doctor_infor.belongsTo(models.Allcode, {
+        foreignKey: "priceId",
+        targetKey: "keyMap",
+        as: "priceTypeData",
+      });
+      Doctor_infor.belongsTo(models.Allcode, {
+        foreignKey: "provinceId",
+        targetKey: "keyMap",
+        as: "provinceTypeData", //do lấy nhiều trường cùng 1 lúc nên cần định danh 1 cái name cho nó
+      });
+      Doctor_infor.belongsTo(models.Allcode, {
+        foreignKey: "paymentId",
+        targetKey: "keyMap",
+        as: "paymentTypeData",
+      });
     }
   }
 
