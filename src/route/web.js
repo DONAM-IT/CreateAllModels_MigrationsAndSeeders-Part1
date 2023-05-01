@@ -38,6 +38,11 @@ let initWebRoutes = (app) => {
     "/api/get-extra-infor-doctor-by-id",
     doctorController.getExtraInforDoctorById
   );
+
+  router.get(
+    "/api/get-profile-doctor-by-id",
+    doctorController.getProfileDoctorById
+  );
   router.get("/hoidanit", (req, res) => {
     return res.send("Hello World with hoidanit");
   });

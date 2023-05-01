@@ -413,6 +413,83 @@ let getExtraInforDoctorById = (idInput) => {
   });
 };
 
+let getProfileDoctorById = (inputId) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      if (!inputId) {
+        resolve({
+          errCode: 1,
+          errMessage: "Missing required parameter!",
+        });
+      } else {
+        let data = await db.User.findOne({
+          where: {
+            id: inputId,
+          },
+          attributes: {
+            exclude: ["password"],
+          },
+          //Muốn dùng include phải định nghĩa các mối quan hệ cho nó
+          include: [
+            //đang include eager loading (lấy nhiều 1 lúc)
+            {
+              model: db.Markdown,
+              attributes: ["description", "contentHTML", "contentMarkdown"],
+            },
+
+            {
+              model: db.Allcode,
+              as: "positionData",
+              attributes: ["valueEn", "valueVi"], //các trường cần lấy
+            },
+            {
+              model: db.Doctor_infor,
+              attributes: {
+                exclude: ["id", "doctorId"],
+              },
+              //map giá trị sang bên bảng Allcode
+              include: [
+                {
+                  model: db.Allcode,
+                  as: "priceTypeData",
+                  attributes: ["valueEn", "valueVi"], //các trường cần lấy
+                },
+                {
+                  model: db.Allcode,
+                  as: "provinceTypeData",
+                  attributes: ["valueEn", "valueVi"], //các trường cần lấy
+                },
+                {
+                  model: db.Allcode,
+                  as: "paymentTypeData",
+                  attributes: ["valueEn", "valueVi"], //các trường cần lấy
+                },
+              ],
+            },
+          ],
+          //raw: true thì nó hiểu là 1 sequelize object chứ nó không phải là 1 thằng javascript object thành ra có sự khác biệt
+          raw: false, //raw: false sẽ covert sang kiểu object
+          nest: true, //nó sẽ gom nhóm lại
+        });
+
+        //convert ảnh qua base64
+        if (data && data.image) {
+          data.image = new Buffer(data.image, "base64").toString("binary");
+        }
+
+        if (!data) data = {};
+
+        resolve({
+          errCode: 0,
+          data: data,
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getTopDoctorHome: getTopDoctorHome, //key và value
   getAllDoctors: getAllDoctors,
@@ -421,4 +498,5 @@ module.exports = {
   bulkCreateSchedule: bulkCreateSchedule,
   getScheduleByDate: getScheduleByDate,
   getExtraInforDoctorById: getExtraInforDoctorById,
+  getProfileDoctorById: getProfileDoctorById,
 };
