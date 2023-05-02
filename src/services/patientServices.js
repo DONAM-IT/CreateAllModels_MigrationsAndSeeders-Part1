@@ -1,5 +1,6 @@
 import db, { sequelize } from "../models/index";
 require("dotenv").config();
+import emailService from "./emailService";
 
 let postBookAppointment = (data) => {
   return new Promise(async (resolve, reject) => {
@@ -10,6 +11,14 @@ let postBookAppointment = (data) => {
           errMessage: "Missing parameter",
         });
       } else {
+        await emailService.sendSimpleEmail({
+          receiverEmail: data.email,
+          patientName: "Hỏi Dân It patient name",
+          time: "8:00 - 9:00 Chủ nhật 2/5/2023",
+          doctorName: "Eric",
+          redirectLink: "https://www.youtube.com/watch?v=oDyCAgjQ7gY",
+        });
+
         //upsert patient
         let user = await db.User.findOrCreate({
           where: { email: data.email },
