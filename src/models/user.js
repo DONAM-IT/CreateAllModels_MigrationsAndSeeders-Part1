@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
         targetKey: "keyMap", //keyMap là cột bên cái table Allcode
         as: "positionData",
       });
+      //quan hệ 1-N: 1 user có thể có nhiều giới tính nghĩa là bảng allcode nó lưu nhiều giới tính
       User.belongsTo(models.Allcode, {
         foreignKey: "gender",
         targetKey: "keyMap",
@@ -38,6 +39,13 @@ Nếu mỗi bản ghi trong bảng `user` chỉ có thể liên kết với tố
 */
 
       User.hasOne(models.Doctor_infor, { foreignKey: "doctorId" });
+
+      //1 - N (1 bác sĩ có nhiều kế hoạch lịch khám bệnhT1 T2 T3 T4, 1 thằng kế hoạch bao giờ cũng thuộc 1 thằng bác sĩ )
+      //One - To Many sử dụng belongsTo và hasMany
+      User.hasMany(models.Schedule, {
+        foreignKey: "doctorId", //
+        as: "doctorData",
+      });
     }
   }
   User.init(

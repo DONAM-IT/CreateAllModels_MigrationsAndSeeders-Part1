@@ -1,0 +1,79 @@
+npm init
+npm i express (cái framework để viết 1 cái server đối với javascript)
+
+npm install body-parser@1.19.0 dotenv@8.2.0 ejs@3.1.5 express@4.17.1
+
+body-parser để có thể viết api được, hay nói cách khác nó giúp lấy được các tham số mà client gửi lên phía server của chúng ta
+dotenv dùng để giúp được câu lệnh trong javacript process.env
+ejs là muốn chạy được cái màn hình bên phía server cần phải có view Engine
+express là thư viện
+
+npm install --save-dev @babel/core@7.12.10 @babel/preset-env@7.12.10 @babel/node@7.12.10 nodemon@2.0.7
+3 cái thư viện kia nó là complier
+nodemon là tự động chạy lại server
+
+ES5 PHIÊN BẢN VERSION 2015 CÚ PHÁP CŨ 
+cú pháp mới ES6 PHIÊN BẢN 2017 TRỞ LÊN 1 funnction cũng có thể gọi là 1 biến
+
+var là biến khai báo gobal
+let là chỉ chạy được trong những đâu, luôn dùng biến let
+
+Arrow function
+muốn cách file javacript xử dụng được thì phải module.exports 
+
+import { Express } from "express"; // cái mới
+var express = require("express");
+
+npm outdated để check version
+
+👉 1. Cài đặt các thư viện: sequlize-cli, sequelize và mysql2
+npm install --save mysql2@2.2.5
+npm install --save sequelize@6.6.2
+npm install --save-dev sequelize-cli@6.2.0
+
+👉 2. Thêm file .sequelizerc tại thư mục root
+Nội dung file .sequelizerc
+const path = require('path');
+module.exports = {
+  'config': path.resolve('./src/config', 'config.json'),
+  'migrations-path': path.resolve('./src', 'migrations'),
+  'models-path': path.resolve('./src', 'models'),
+  'seeders-path': path.resolve('./src', 'seeders')
+}
+👉 Tại thư mục root, sử dụng câu lệnh: node_modules/.bin/sequelize init
+
+
+
+👉 3. Tạo model:  định nghĩa tên table bằng code
+npx sequelize-cli model:generate --name User --attributes firstName:string,lastName:string,email:string
+
+👉 4: Tạo migrations: mục đích dự vào model trên để auto tự tạo table trên database
+tạo tên database trước rồi sau đó chạy lệnh dưới đây để tạo các table
+npx sequelize-cli db:migrate
+
+👉5. Tạo Seeder: npx sequelize-cli seed:generate --name demo-user
+
+https://sequelize.org/docs/v6/other-topics/migrations/#installing-the-cli
+npx sequelize-cli db:seed:all
+
+
+npm i --save bcrypt@5.0.1
+npm i --save bcryptjs@2.4.3
+npm i --save cors@2.8.5
+npm install --save react-slick@0.28.1
+npm install --save slick-carousel@1.8.1
+npm uninstall bootstrap
+npm i --save bootstrap@4.6.0
+npm i --save react-image-lightbox@5.1.1
+
+👉6.
+xóa bảng user và trong sequelizemeta trên php admin
+npx sequelize-cli db:migrate --to migration-create-user.js
+
+npm i react-icons
+npm i --save react-markdown-editor-lite@1.3.0
+npm i --save markdown-it@12.1.0
+npm i --save react-select@4.3.1
+npm i --save lodash@4.17.21
+npm i --save react-number-format@4.6.4
+npm i --save-exact nodemailer@6.6.3

@@ -344,8 +344,14 @@ let getScheduleByDate = (doctorId, date) => {
               as: "timeTypeData",
               attributes: ["valueEn", "valueVi"], //thuộc tính lấy chỉ là tiếng anh và tiếng việt
             },
+            {
+              model: db.User,
+              as: "doctorData",
+              attributes: ["firstName", "lastName"],
+            },
           ],
-          raw: true,
+
+          raw: false,
           nest: true,
         });
 

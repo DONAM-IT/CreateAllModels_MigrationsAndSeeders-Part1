@@ -16,6 +16,12 @@ module.exports = (sequelize, DataTypes) => {
         //dùng 2 cái trường timeType và keyMap để squelize biết khi muốn lấy trường timeType này nó sẽ map bên cái trường keyMap bên cái bảng Allcode và sequelize sẽ trả data bên bảng data bên AllCode dưới dạng timeTypeData
         as: "timeTypeData",
       });
+      //1 Thằng Schedule thuộc belongsTo về 1 thằng bác sĩ
+      Schedule.belongsTo(models.User, {
+        foreignKey: "doctorId",
+        targetKey: "id",
+        as: "doctorData",
+      });
     }
   }
   Schedule.init(
