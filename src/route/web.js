@@ -51,6 +51,11 @@ let initWebRoutes = (app) => {
     patientController.postBookAppointment
   );
 
+  router.post(
+    "/api/verfy-book-appointment",
+    patientController.postVerifyBookAppointment
+  );
+
   router.get("/hoidanit", (req, res) => {
     return res.send("Hello World with hoidanit");
   });

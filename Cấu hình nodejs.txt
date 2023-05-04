@@ -56,6 +56,8 @@ npx sequelize-cli db:migrate
 https://sequelize.org/docs/v6/other-topics/migrations/#installing-the-cli
 npx sequelize-cli db:seed:all
 
+xem cấu hình xampp
+show variables like 'max_allowed_packet'
 
 npm i --save bcrypt@5.0.1
 npm i --save bcryptjs@2.4.3
@@ -77,3 +79,4 @@ npm i --save react-select@4.3.1
 npm i --save lodash@4.17.21
 npm i --save react-number-format@4.6.4
 npm i --save-exact nodemailer@6.6.3
+npm i --save-exact uuid@8.3.2
