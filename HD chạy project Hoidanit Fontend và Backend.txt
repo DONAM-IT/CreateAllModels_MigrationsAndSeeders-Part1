@@ -1,0 +1,49 @@
+down 2 file trên github đặt đúng chỗ client và server
+
+1.đổi node version 14
+2. Tải xampp => là hệ quản trị dữ liệu giống mysql
+   run start vào php admin tạo database có tên là hoidanit
+3. folder server tạo file .env 
+PORT=8080
+NODE_ENV=development
+URL_REACT=http://localhost:3000
+LIMIT_BOOK=5
+LIMIT_USER=5
+MAX_NUMBER_SCHEDULE=10
+EMAIL_APP_PASSWORD=
+EMAIL_APP=
+4. run npm i
+5. mở 1 terminal khác những vẫn chạy client và server
+seeder-user.js
+"use strict";
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    return queryInterface.bulkInsert("Users", [
+      {
+        email: "nampro@gmail.com",
+        password: "$2a$10$chzNWR86a7LDx4Z.5roeyuD8Wk3ohG5lA4pD9rIB5T9jldauO24vu", //plain text ddsffasdf -> hash password
+        firstName: "Do",
+        lastName: "Nam",
+        address: "USA",
+        gender: "M",
+        roleId: "R1",
+        positionId:"P0",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    /**
+     * Add commands to revert seed here.
+     *
+     * Example:
+     * await queryInterface.bulkDelete('People', null, {});
+     */
+  },
+};
+=> run: 
+npx sequelize-cli db:seed:all => để có tài khoản login vào db
+ $2a$10$chzNWR86a7LDx4Z.5roeyuD8Wk3ohG5lA4pD9rIB5T9jldauO24vu
